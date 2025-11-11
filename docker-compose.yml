@@ -1,0 +1,29 @@
+# version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80" # Access the production build at http://localhost:3000
+    restart: unless-stopped
+
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    # Mount project so edits on host are reflected in container
+    volumes:
+      - ./:/app:delegated
+      # Keep node_modules inside container to avoid host/container conflicts
+      - /app/node_modules
+    ports:
+      - "5173:5173" # Vite dev server
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - HOST=0.0.0.0
+    # Allow container to resolve host.docker.internal (useful on Docker Desktop)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["npm","run","dev","--","--host","0.0.0.0"]

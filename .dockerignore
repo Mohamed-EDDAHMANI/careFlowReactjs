@@ -1,0 +1,11 @@
+node_modules
+/dist
+.vscode
+.git
+.gitignore
+.env
+.env.local
+npm-debug.log
+.DS_Store
+
+# Optional: ignore build output and local env files

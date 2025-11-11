@@ -1,17 +1,20 @@
-import { useState } from 'react'
-import './App.css'
+import { BrowserRouter, useRoutes } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import { routes } from "./routes";
 
-function App() {
+const AppRoutes = () => {
+  // combine all routes together
+  return useRoutes(routes);
+};
 
-  const [name, setName] = useState('Simo')
-
+const App = () => {
   return (
-    <>
-        <button onClick={() => setName(na => (na === 'Simo' ? 'Eddahmani' : 'Simo'))}>
-          hello my name is <span className='text-red-300 text-xl'>{name}</span>
-        </button>
-    </>
-  )
-}
+    <AuthProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </AuthProvider>
+  );
+};
 
-export default App
+export default App;
