@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import type { Role } from "../context/AuthContext";
+
 
 const Login = () => {
   const { login } = useAuth();
@@ -17,7 +19,7 @@ const Login = () => {
     const fakeResponse = {
       id: "1",
       name: "Dr. Mohamed",
-      role: "doctor", // admin | doctor | nurse | patient
+      role: "doctor" as Role, // admin | doctor | nurse | patient
       token: "abc123",
     };
 
