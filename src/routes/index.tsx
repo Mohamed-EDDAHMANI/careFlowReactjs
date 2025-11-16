@@ -1,10 +1,10 @@
 import type { RouteObject } from "react-router-dom";
-import { publicRoutes } from "./PublicRoutes";
-import ProtectedRoute from "./ProtectedRoutes";
+import { publicRoutes } from "./AppRouter";
+import ProtectedRoute from "../components/ProtectedRoutes";
 import RoleBasedRoute from "./RoleBasedRoutes";
 import { Navigate } from "react-router-dom";
 
-import { useAuth } from "../context/AuthContext";
+import { useSelector } from "react-redux";
 import Dashboard from "../pages/Dashboard";
 import AdminPage from "../pages/AdminPage";
 import DoctorPage from "../pages/DoctorPage";
@@ -12,11 +12,12 @@ import NursePage from "../pages/NursePage";
 import PatientPage from "../pages/PatientPage";
 import About from "../pages/About";
 import NotFound from "../pages/NotFound";
+import Home from "../pages/Home";
 
 
 const RootRedirect = () => {
-  const { user } = useAuth();
-  return user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
+  const user = useSelector((state: any) => state.auth?.user);
+  return user ? <Navigate to="/dashboard" replace /> : <Navigate to="/home" replace />;
 };
 
 const protectedRoutes: RouteObject[] = [
@@ -53,6 +54,7 @@ const roleBasedRoutes: RouteObject[] = [
 
 export const routes: RouteObject[] = [
   { path: "/", element: <RootRedirect /> }, 
+  { path: "/home", element: <Home /> },
   ...publicRoutes,
   ...protectedRoutes,
   ...roleBasedRoutes,

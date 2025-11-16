@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAppSelector } from "../app/hooks";
 import type React from "react";
 
 type Props = {
@@ -8,11 +8,10 @@ type Props = {
 };
 
 const RoleBasedRoute = ({ children, allowedRoles }: Props) => {
-  const { user } = useAuth();
+  const user = useAppSelector((s) => s.auth.user);
 
   if (!user) return <Navigate to="/login" replace />;
-  if (!allowedRoles.includes(user.role))
-    return <Navigate to="/unauthorized" replace />;
+  if (!allowedRoles.includes(user.role || '')) return <Navigate to="/unauthorized" replace />;
 
   return children;
 };
