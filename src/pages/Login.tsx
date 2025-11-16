@@ -16,16 +16,12 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const result = await dispatch(loginUser(form) as any);
-    if (result.type === 'auth/login/fulfilled') {
-      if (result.payload.success) {
-        navigate("/dashboard");
-      } else {
-        setError(result.payload.message);
-      }
-    } else if (result.type === 'auth/login/rejected') {
-      setError(result.payload?.message || "Une erreur est survenue");
-    }
+    const result = await dispatch(loginUser(form));
+    if (loginUser.fulfilled.match(result)) {
+    navigate("/dashboard");
+  } else if (loginUser.rejected.match(result)) {
+    setError(result.payload as string || "Une erreur est survenue");
+  }
   };
 
   return (
