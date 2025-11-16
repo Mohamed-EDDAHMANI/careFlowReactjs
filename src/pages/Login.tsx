@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../features/auth/authSlice";
-import type { RootState } from "../app/store";
+import type { RootState, AppDispatch } from "../app/store";
 
 
 const Login = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const theme = useSelector((state: RootState) => state.theme.mode);
   const [error, setError] = useState("");

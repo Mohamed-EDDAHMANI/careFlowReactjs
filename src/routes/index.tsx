@@ -2,9 +2,8 @@ import type { RouteObject } from "react-router-dom";
 import { publicRoutes } from "./AppRouter";
 import ProtectedRoute from "../components/ProtectedRoutes";
 import RoleBasedRoute from "./RoleBasedRoutes";
-import { Navigate } from "react-router-dom";
+import RootRedirect from "../components/RootRedirect";
 
-import { useSelector } from "react-redux";
 import Dashboard from "../pages/Dashboard";
 import AdminPage from "../pages/AdminPage";
 import DoctorPage from "../pages/DoctorPage";
@@ -15,10 +14,6 @@ import NotFound from "../pages/NotFound";
 import Home from "../pages/Home";
 
 
-const RootRedirect = () => {
-  const user = useSelector((state: any) => state.auth?.user);
-  return user ? <Navigate to="/dashboard" replace /> : <Navigate to="/home" replace />;
-};
 
 const protectedRoutes: RouteObject[] = [
   { path: "/dashboard", element: <ProtectedRoute>{<Dashboard />}</ProtectedRoute> },
