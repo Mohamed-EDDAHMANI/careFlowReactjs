@@ -69,14 +69,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set lowercase repository owner
-        run: echo "REPO_OWNER_LOWER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      - name: Set lowercase repository name
+        run: echo "REPO_NAME_LOWER=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Build and push image
         uses: docker/build-push-action@v4
         with:
           push: true
           tags: |
-            ghcr.io/${{ env.REPO_OWNER_LOWER }}/careflow-app:latest
-            ghcr.io/${{ env.REPO_OWNER_LOWER }}/careflow-app:${{ github.sha }}
+            ghcr.io/${{ env.REPO_NAME_LOWER }}:latest
+            ghcr.io/${{ env.REPO_NAME_LOWER }}:${{ github.sha }}
           file: ./Dockerfile
