@@ -1,12 +1,14 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import authReducer from '../features/auth/authSlice';
-// import userReducer from '../features/user/userSlice';
-// import appointmentReducer from '../features/appointments/appointmentSlice';
+import themeReducer from '../features/theme/themeSlice';
+import usersReducer from '../features/user/usersSlice';
+import appointmentsReducer from '../features/appointment/appointmentSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  // user: userReducer,
-  // appointments: appointmentReducer,
+  theme: themeReducer,
+  users: usersReducer,
+  appointments: appointmentsReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

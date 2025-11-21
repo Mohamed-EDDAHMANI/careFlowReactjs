@@ -14,11 +14,21 @@ axiosClient.interceptors.request.use((config) => {
   return config;
 });
 
-// response interceptor → handle token expired
+// response interceptor → handle token expired and forbidden errors
 axiosClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    
+    // Handle FORBIDDEN error - redirect to login
+    if (error.response?.data?.code === "FORBIDDEN") {
+      localStorage.removeItem("accessToken");
+      const { store } = await import("../app/store");
+      const { logout } = await import("../features/auth/authSlice");
+      store.dispatch(logout());
+      window.location.href = "/";
+      return Promise.reject(error);
+    }
     
     if (
       error.response?.data?.code === "ACCESS_TOKEN_EXPIRED" &&

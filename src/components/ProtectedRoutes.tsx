@@ -9,6 +9,7 @@ type Props = {
 const ProtectedRoute = ({ children }: Props) => {
   const user = useSelector((state: RootState) => state.auth?.user);
   const accessTokenFromStore = useSelector((state: RootState) => state.auth?.accessToken);
+  
   if (!user || !accessTokenFromStore) return <Navigate to="/login" replace />;
   return children;
 };

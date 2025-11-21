@@ -1,0 +1,143 @@
+{
+  "project": {
+    "name": "CareFlow EHR (Full System)",
+    "description": "Système complet de gestion EHR organisé en microservices.",
+    "architecture": "Microservices",
+    "services": [
+      "CliniqueService",
+      "LaboratoireService",
+      "PharmacyService"
+    ]
+  },
+  "microservices": [
+    {
+      "name": "CliniqueService",
+      "description": "Service principal (noyau) gérant l'identité, les patients, les rdv, les consultations et les documents.",
+      "actors": [
+        "Utilisateur (Base)",
+        "Administrateur",
+        "Médecin",
+        "Infirmier(ère)",
+        "Secrétaire",
+        "Patient"
+      ],
+      "entities": [
+        {
+          "name": "User",
+          "description": "Gestion de l'identité, authentification (JWT) et rôles.",
+          "attributes": [
+            { "name": "_id", "type": "ObjectId" },
+            { "name": "email", "type": "String", "isUnique": true },
+            { "name": "passwordHash", "type": "String" },
+            { "name": "role", "type": "String", "enum": ["admin", "medecin", "infirmier", "secretaire", "patient", "pharmacien", "labo_manager"] },
+            { "name": "isActive", "type": "Boolean", "default": true },
+            { "name": "profile", "type": "Object" }
+          ]
+        },
+        {
+          "name": "Patient",
+          "description": "Dossier démographique et médical de base du patient.",
+          "attributes": [
+            { "name": "_id", "type": "ObjectId" },
+            { "name": "userId", "type": "ObjectId", "ref": "User" },
+            { "name": "dossierId", "type": "String", "isUnique": true },
+            { "name": "contactInfo", "type": "Object" },
+            { "name": "assurance", "type": "Object" },
+            { "name": "allergies", "type": "Array<String>" },
+            { "name": "antecedents", "type": "Array<String>" },
+            { "name": "consentements", "type": "Array<Object>" }
+          ]
+        },
+        {
+          "name": "Appointment",
+          "description": "Gestion des rendez-vous et des disponibilités.",
+          "attributes": [
+            { "name": "_id", "type": "ObjectId" },
+            { "name": "patientId", "type": "ObjectId", "ref": "Patient" },
+            { "name": "practitionerId", "type": "ObjectId", "ref": "User" },
+            { "name": "startTime", "type": "Date" },
+            { "name": "endTime", "type": "Date" },
+            { "name": "status", "type": "String", "enum": ["scheduled", "completed", "cancelled"] },
+            { "name": "motif", "type": "String" }
+          ]
+        },
+        {
+          "name": "Consultation",
+          "description": "Dossier d'une rencontre clinique (post-rdv).",
+          "attributes": [
+            { "name": "_id", "type": "ObjectId" },
+            { "name": "appointmentId", "type": "ObjectId", "ref": "Appointment" },
+            { "name": "patientId", "type": "ObjectId", "ref": "Patient" },
+            { "name": "medecinId", "type": "ObjectId", "ref": "User" },
+            { "name": "vitals", "type": "Object" },
+            { "name": "diagnostics", "type": "Array<String>" },
+            { "name": "procedures", "type": "Array<String>" }
+          ]
+        },
+        {
+          "name": "MedicalDocument",
+          "description": "Stockage centralisé (S3/MinIO) pour tous les documents.",
+          "attributes": [
+            { "name": "_id", "type": "ObjectId" },
+            { "name": "patientId", "type": "ObjectId", "ref": "Patient" },
+            { "name": "uploaderId", "type": "ObjectId", "ref": "User" },
+            { "name": "storageKey", "type": "String" },
+            { "name": "filename", "type": "String" },
+            { "name": "mimeType", "type": "String" },
+            { "name": "size", "type": "Number" },
+            { "name": "category", "type": "String", "enum": ["imaging", "report", "external", "lab_report", "other"] },
+            { "name": "uploadDate", "type": "Date" }
+          ]
+        }
+      ],
+      "useCases": [
+        "S'inscrire",
+        "Se connecter (JWT)",
+        "Rafraîchir le token",
+        "Réinitialiser le mot de passe",
+        "Gérer les comptes utilisateurs (Admin)",
+        "Suspendre/Réactiver un compte (Admin)",
+        "Créer/Modifier/Consulter un dossier patient",
+        "Rechercher un patient",
+        "Planifier un rendez-vous",
+        "Vérifier les disponibilités (prévention conflits 409)",
+        "Modifier/Annuler un rendez-vous",
+        "Voir l'agenda (par médecin, par clinique)",
+        "Consulter ses rendez-vous (Patient)",
+        "Créer une consultation (post-rdv)",
+        "Enregistrer les constantes vitales",
+        "Uploader un document (imagerie, rapport externe)",
+        "Consulter tous les documents d'un patient",
+        "Générer une URL de téléchargement présignée"
+      ],
+      "stateMachines": [
+        {
+          "entity": "Appointment",
+          "attribute": "status",
+          "states": ["scheduled", "completed", "cancelled"]
+        }
+      ],
+      "apiEndpoints": [
+        { "method": "POST", "route": "/auth/register", "description": "S'inscrire" },
+        { "method": "POST", "route": "/auth/login", "description": "Se connecter (JWT)" },
+        { "method": "POST", "route": "/auth/refresh", "description": "Rafraîchir le token" },
+        { "method": "POST", "route": "/auth/reset-password", "description": "Réinitialiser le mot de passe" },
+        { "method": "GET", "route": "/admin/users", "description": "Gérer les comptes utilisateurs (Admin) - Lister" },
+        { "method": "PUT", "route": "/admin/users/{id}/status", "description": "Suspendre/Réactiver un compte (Admin)" },
+        { "method": "POST", "route": "/patients", "description": "Créer un dossier patient" },
+        { "method": "GET", "route": "/patients/{id}", "description": "Consulter un dossier patient" },
+        { "method": "PUT", "route": "/patients/{id}", "description": "Modifier un dossier patient" },
+        { "method": "GET", "route": "/patients/search", "description": "Rechercher un patient" },
+        { "method": "POST", "route": "/appointments", "description": "Planifier un rendez-vous (avec prévention conflits 409)" },
+        { "method": "GET", "route": "/appointments/{id}", "description": "Consulter un rendez-vous" },
+        { "method": "PUT", "route": "/appointments/{id}", "description": "Modifier ou annuler un rendez-vous" },
+        { "method": "GET", "route": "/appointments/availability", "description": "Vérifier les disponibilités" },
+        { "method": "POST", "route": "/consultations", "description": "Créer une consultation (post-rdv) et enregistrer les vitales" },
+        { "method": "GET", "route": "/patients/{patientId}/consultations", "description": "Consulter les consultations d'un patient" },
+        { "method": "POST", "route": "/documents/upload", "description": "Uploader un document (imagerie, rapport externe)" },
+        { "method": "GET", "route": "/documents/{id}/download", "description": "Générer une URL de téléchargement présignée" },
+        { "method": "GET", "route": "/patients/{patientId}/documents", "description": "Consulter tous les documents d'un patient" }
+      ]
+    }
+  ]
+}
