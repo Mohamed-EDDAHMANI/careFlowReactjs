@@ -62,8 +62,20 @@ const CreateAppointmentModal: React.FC<CreateAppointmentModalProps> = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setSelectedFiles(Array.from(e.target.files));
+      const newFiles = Array.from(e.target.files);
+      const totalFiles = selectedFiles.length + newFiles.length;
+      
+      if (totalFiles > 10) {
+        setError(`Maximum 10 files allowed. You're trying to add ${totalFiles} files.`);
+        return;
+      }
+      
+      // Append new files to existing ones
+      setSelectedFiles(prev => [...prev, ...newFiles]);
+      setError(null);
     }
+    // Reset input value to allow selecting the same files again
+    e.target.value = '';
   };
 
   const handleRemoveFile = (index: number) => {
@@ -263,17 +275,18 @@ const CreateAppointmentModal: React.FC<CreateAppointmentModalProps> = ({
             {/* File Upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Upload Documents (Optional)
+                Upload Documents (Optional) - {selectedFiles.length}/10 files
               </label>
               <input
                 type="file"
                 multiple
                 onChange={handleFileChange}
                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                disabled={selectedFiles.length >= 10}
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <p className="text-xs text-gray-500 mt-1">
-                Accepted formats: PDF, DOC, DOCX, JPG, PNG (Max 10 files)
+                Accepted formats: PDF, DOC, DOCX, JPG, PNG • Maximum 10 files • Select multiple files at once or add them one by one
               </p>
               
               {/* Selected Files List */}

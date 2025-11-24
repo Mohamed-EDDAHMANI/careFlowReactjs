@@ -26,6 +26,9 @@ export const PERMISSIONS = {
   // Consultations
   CONSULTATION_CREATE: 'consultation_create',
   CONSULTATION_VIEW: 'consultation_view',
+  CONSULTATION_UPDATE: 'consultation_update',
+  CONSULTATION_DELETE: 'consultation_delete',
+  CONSULTATION_VIEW_OWN: 'consultation_view_own',
   
   // Documents
   DOCUMENT_UPLOAD: 'document_upload',

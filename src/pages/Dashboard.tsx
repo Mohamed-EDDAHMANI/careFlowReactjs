@@ -5,6 +5,7 @@ import { useDashboard } from '../contexts/DashboardContext';
 import PermissionGuard from '../components/PermissionGuard';
 import UsersPage from './UsersPage';
 import AppointmentsPage from './AppointmentsPage';
+import ConsultationsPage from './ConsultationsPage';
 
 const Dashboard: React.FC = () => {
   const { activeComponent } = useDashboard();
@@ -32,7 +33,7 @@ const Dashboard: React.FC = () => {
       case 'consultations':
         return (
           <PermissionGuard permissions={PERMISSIONS.CONSULTATION_VIEW}>
-            <div className="p-6">Consultations Component - Coming Soon</div>
+            <ConsultationsPage />
           </PermissionGuard>
         );
       case 'lab':

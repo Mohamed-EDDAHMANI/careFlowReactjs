@@ -11,6 +11,7 @@ export const appointmentService = {
     if (params.to) queryParams.append('to', params.to);
     if (params.sort) queryParams.append('sort', params.sort);
     if (params.order) queryParams.append('order', params.order);
+    if (params.status) queryParams.append('status', params.status);
 
     const response = await axiosClient.get(`apiCli/appointments/all/?${queryParams.toString()}`);
     return response.data;

@@ -1,24 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import { combineReducers } from '@reduxjs/toolkit';
-import authReducer from "../features/auth/authSlice";
-import themeReducer from "../features/theme/themeSlice";
-import usersReducer from "../features/user/usersSlice";
-import appointmentsReducer from "../features/appointment/appointmentSlice";
+import rootReducer from "./rootReducer";
 
 const persistConfig = {
   key: 'root',
   storage,
   whitelist: ['auth'], // Only persist auth state
 };
-
-const rootReducer = combineReducers({
-  auth: authReducer,
-  theme: themeReducer,
-  users: usersReducer,
-  appointments: appointmentsReducer,
-});
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

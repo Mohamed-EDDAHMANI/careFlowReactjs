@@ -3,12 +3,14 @@ import authReducer from '../features/auth/authSlice';
 import themeReducer from '../features/theme/themeSlice';
 import usersReducer from '../features/user/usersSlice';
 import appointmentsReducer from '../features/appointment/appointmentSlice';
+import consultationsReducer from '../features/consultations/consultationsSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   theme: themeReducer,
   users: usersReducer,
   appointments: appointmentsReducer,
+  consultations: consultationsReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

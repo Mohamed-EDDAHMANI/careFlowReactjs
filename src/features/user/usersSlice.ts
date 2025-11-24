@@ -5,6 +5,7 @@ import { userService } from './userService';
 const initialState: UsersState = {
   users: [],
   doctors: [],
+  patients: [],
   loading: false,
   error: null,
 };
@@ -110,7 +111,7 @@ const usersSlice = createSlice({
       })
       .addCase(fetchPatients.fulfilled, (state, action) => {
         state.loading = false;
-        state.users = action.payload;
+        state.patients = action.payload;
       })
       .addCase(fetchPatients.rejected, (state, action) => {
         state.loading = false;

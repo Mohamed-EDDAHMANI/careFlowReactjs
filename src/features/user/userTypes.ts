@@ -21,6 +21,7 @@ export interface User {
 export interface UsersState {
   users: User[];
   doctors: User[];
+  patients: User[];
   loading: boolean;
   error: string | null;
 }

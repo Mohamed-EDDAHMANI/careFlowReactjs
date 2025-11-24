@@ -73,6 +73,7 @@ export interface FetchAppointmentsParams {
   to?: string;
   sort?: string;
   order?: 'asc' | 'desc';
+  status?: string;
 }
 
 export interface CreateAppointmentData {
